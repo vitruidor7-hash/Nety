@@ -154,6 +154,20 @@
             <h2 class="text-2xl font-bold text-red-600 mb-4">Delete Account</h2>
             <p class="text-gray-600 mb-4">Are you sure you want to delete your account? This action is permanent and cannot be undone. All your profile data will be removed.</p>
             <div id="delete-error" class="text-red-600 text-sm mb-4" role="alert"></div>
+            <!-- Reauthentication Section (shown only if needed) -->
+            <div id="reauth-section" class="hidden space-y-3 border-t pt-4 mt-4">
+                <p id="reauth-hint" class="text-sm text-gray-700">For security, please reauthenticate and try again.</p>
+                <div id="reauth-password-container" class="space-y-2 hidden">
+                    <label for="reauth-password-input" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                    <input id="reauth-password-input" type="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Your password">
+                    <button id="reauth-password-btn" class="w-full bg-slate-800 text-white font-semibold py-2 px-4 rounded-full hover:bg-slate-700 transition duration-200">Reauthenticate with Password</button>
+                </div>
+                <button id="reauth-google-btn" class="hidden w-full flex items-center justify-center space-x-2 bg-white border border-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-full hover:bg-gray-50 transition duration-200">
+                    <svg class="w-5 h-5" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></svg>
+                    <span>Reauthenticate with Google</span>
+                </button>
+                <button id="retry-delete-btn" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-full hover:bg-red-700 transition duration-200">Retry Delete</button>
+            </div>
             <div class="flex justify-end space-x-3 mt-6">
                 <button id="cancel-delete-btn" class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-full hover:bg-gray-300 transition duration-200">
                     Cancel
@@ -261,20 +275,15 @@
                 <div class="bg-white p-4 rounded-lg shadow-sm">
                     <h2 class="text-2xl font-bold text-gray-800">Discover All Posts</h2>
                     
-                    <!-- NEW: Filter tabs -->
-                    <div id="discover-filters" class="flex space-x-1 md:space-x-4 border-b border-gray-200 mt-4 overflow-x-auto">
-                        <button data-filter="new" class="filter-link active flex-shrink-0 text-gray-600 py-3 px-3 md:px-4 border-b-2 border-transparent hover:border-gray-400 transition duration-200">
-                            New
-                        </button>
-                        <button data-filter="popular" class="filter-link flex-shrink-0 text-gray-600 py-3 px-3 md:px-4 border-b-2 border-transparent hover:border-gray-400 transition duration-200">
-                            Popular
-                        </button>
-                        <button data-filter="likes" class="filter-link flex-shrink-0 text-gray-600 py-3 px-3 md:px-4 border-b-2 border-transparent hover:border-gray-400 transition duration-200">
-                            Most Likes
-                        </button>
-                        <button data-filter="comments" class="filter-link flex-shrink-0 text-gray-600 py-3 px-3 md:px-4 border-b-2 border-transparent hover:border-gray-400 transition duration-200">
-                            Most Comments
-                        </button>
+                    <!-- NEW: Filter dropdown -->
+                    <div class="mt-4">
+                        <label for="discover-filter-select" class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
+                        <select id="discover-filter-select" class="w-full md:w-auto border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="new">New</option>
+                            <option value="popular">Popular</option>
+                            <option value="likes">Most Likes</option>
+                            <option value="comments">Most Comments</option>
+                        </select>
                     </div>
                 </div>
 
@@ -434,6 +443,13 @@
         <a href="#" id="bottom-nav-profile-link" data-target="content-profile" class="bottom-nav-link p-2 text-gray-600">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
         </a>
+        <!-- NEW: Settings link for mobile -->
+        <a href="#" data-target="content-settings" class="bottom-nav-link p-2 text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </a>
     </nav>
 
     <script type="module">
@@ -448,7 +464,10 @@
             signInWithEmailAndPassword,
             signOut,
             signInWithCustomToken,
-            deleteUser // NEW: Import deleteUser
+            deleteUser, // NEW: Import deleteUser
+            reauthenticateWithPopup,
+            reauthenticateWithCredential,
+            EmailAuthProvider
         } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
         import { 
             getFirestore, 
@@ -456,6 +475,7 @@
             setDoc, 
             getDoc,
             getDocs,
+            collectionGroup,
             collection,
             addDoc,
             query,
@@ -469,7 +489,8 @@
             limit,
             updateDoc,
             startAfter,
-            deleteDoc // NEW: Import deleteDoc
+            deleteDoc, // NEW: Import deleteDoc
+            deleteField
         } from 'https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js';
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
 
@@ -493,7 +514,9 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const analytics = getAnalytics(app);
+        // Safely initialize analytics (it can throw on unsupported environments)
+        let analytics = null;
+        try { analytics = getAnalytics(app); } catch (_) { analytics = null; }
 
         // --- 2. GLOBAL STATE ---
         let currentUser = null;
@@ -511,6 +534,7 @@
         let unsubscribeConversation = null;
 
         let currentDiscoverFilter = 'new'; // NEW: Filter state
+        let likeOpsInFlight = new Set(); // Prevent rapid like toggles per post
 
         // --- 3. DOM ELEMENTS ---
         const authContainer = document.getElementById('auth-container');
@@ -589,9 +613,17 @@
         const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
         const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
         const deleteError = document.getElementById('delete-error');
+        // Reauth elements
+        const reauthSection = document.getElementById('reauth-section');
+        const reauthHint = document.getElementById('reauth-hint');
+        const reauthPasswordContainer = document.getElementById('reauth-password-container');
+        const reauthPasswordInput = document.getElementById('reauth-password-input');
+        const reauthPasswordBtn = document.getElementById('reauth-password-btn');
+        const reauthGoogleBtn = document.getElementById('reauth-google-btn');
+        const retryDeleteBtn = document.getElementById('retry-delete-btn');
         
         // NEW: Discover Filter Elements
-        const discoverFilters = document.getElementById('discover-filters');
+        const discoverFilterSelect = document.getElementById('discover-filter-select');
         
         // --- 4. AUTH STATE CONTROLLER ---
 
@@ -972,22 +1004,88 @@
                 homeLastVisible = null;
             }
             
-            // Get list of users we follow (max 30 for 'in' query)
+            // Get list of users we follow
             const followingCol = collection(db, "users", userId, "following");
-            const followingSnapshot = await getDocs(query(followingCol, limit(29))); // 29 + self
+            const followingSnapshot = await getDocs(followingCol);
             
             const followedUserIds = [userId]; // Always include self
             followingSnapshot.forEach(doc => {
                 followedUserIds.push(doc.id);
             });
 
-            const baseQuery = query(
-                collection(db, "posts"), 
-                where("userId", "in", followedUserIds)
-            );
-            
-            // MODIFIED: Pass sort constraint
-            await loadFeed('home', baseQuery, orderBy("createdAt", "desc"), isLoadMore);
+            // If we can use a single 'in' (<=10 IDs), use normal paginated feed
+            if (followedUserIds.length <= 10) {
+                const baseQuery = query(
+                    collection(db, "posts"), 
+                    where("userId", "in", followedUserIds)
+                );
+                await loadFeed('home', baseQuery, orderBy("createdAt", "desc"), isLoadMore);
+                return;
+            }
+
+            // Otherwise: multi-query first page merge, disable Load More
+            if (isLoadMore) {
+                // No reliable cross-chunk pagination; hide load more
+                homeLoadMoreBtn.classList.add('hidden');
+                return;
+            }
+
+            isLoadingHome = true;
+            homeFeedContainer.innerHTML = '<p class="text-gray-500 text-center p-4">Loading feed...</p>';
+            homeLoadMoreBtn.classList.add('hidden');
+
+            // Chunk into groups of 10 and fetch top N from each
+            const chunks = [];
+            for (let i = 0; i < followedUserIds.length; i += 10) {
+                chunks.push(followedUserIds.slice(i, i + 10));
+            }
+
+            try {
+                const resultsPerChunk = await Promise.all(chunks.map(async (ids) => {
+                    const q = query(
+                        collection(db, "posts"),
+                        where("userId", "in", ids),
+                        orderBy("createdAt", "desc"),
+                        limit(POST_PAGE_SIZE)
+                    );
+                    const snap = await getDocs(q);
+                    return snap.docs;
+                }));
+
+                const allDocs = Array.from(new Map(
+                    resultsPerChunk
+                        .flat()
+                        .map(d => [d.id, d])
+                ).values());
+
+                allDocs.sort((a, b) => {
+                    const ad = a.data().createdAt?.toDate ? a.data().createdAt.toDate().getTime() : 0;
+                    const bd = b.data().createdAt?.toDate ? b.data().createdAt.toDate().getTime() : 0;
+                    return bd - ad;
+                });
+
+                const firstPage = allDocs.slice(0, POST_PAGE_SIZE);
+                homeFeedContainer.innerHTML = '';
+                if (firstPage.length === 0) {
+                    homeFeedContainer.innerHTML = '<p class="text-gray-500 text-center p-4">No posts found.</p>';
+                } else {
+                    firstPage.forEach(d => {
+                        homeFeedContainer.appendChild(createPostElement(d.id, d.data()));
+                    });
+                }
+
+                // Inform user about pagination limitation
+                const note = document.createElement('p');
+                note.className = 'text-xs text-gray-500 text-center mt-2';
+                note.textContent = 'Showing recent posts from followed users. For more, use Discover.';
+                homeFeedContainer.appendChild(note);
+
+            } catch (error) {
+                console.error('Error loading home feed (chunked):', error);
+                homeFeedContainer.innerHTML = `<p class="text-red-500 text-center">Error loading feed. ${error.message}</p>`;
+            }
+
+            isLoadingHome = false;
         }
 
         // MODIFIED: To use filter state
@@ -1073,6 +1171,7 @@
 
             // Like Button
             const likeBtn = document.createElement('button');
+            likeBtn.type = 'button';
             const isLiked = currentUserLikedPosts.has(postId);
             likeBtn.className = `flex items-center space-x-2 text-gray-500 hover:text-red-500 group ${isLiked ? 'liked-button' : ''}`;
             likeBtn.setAttribute('aria-label', 'Like post');
@@ -1090,6 +1189,7 @@
 
             // Comment Button
             const commentBtn = document.createElement('button');
+            commentBtn.type = 'button';
             commentBtn.className = 'flex items-center space-x-2 text-gray-500 hover:text-indigo-500 group';
             commentBtn.setAttribute('aria-label', 'Comment on post');
             commentBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>`;
@@ -1163,6 +1263,8 @@
 
         async function toggleLike(postId, isLiked) {
             if (!currentUser) return;
+            if (likeOpsInFlight.has(postId)) return; // prevent rapid double-toggles
+            likeOpsInFlight.add(postId);
             
             // --- Optimistic UI Update ---
             updateLikeUI(postId, !isLiked);
@@ -1214,7 +1316,7 @@
                 } else {
                     currentUserLikedPosts.delete(postId);
                 }
-            }
+            } finally { likeOpsInFlight.delete(postId); }
         }
         
         function updateLikeUI(postId, isLiked) {
@@ -1532,38 +1634,43 @@
         async function loadConversationList() {
             if (!currentUser) return;
 
-            dmConversationList.innerHTML = '<p class="p-4 text-gray-500">Loading following list...</p>';
+            dmConversationList.innerHTML = '<p class="p-4 text-gray-500">Loading conversations...</p>';
 
-            const followingCol = collection(db, "users", currentUser.uid, "following");
-            const followingSnapshot = await getDocs(followingCol);
+            try {
+                const convosQ = query(
+                    collection(db, "conversations"),
+                    where("members", "array-contains", currentUser.uid),
+                    orderBy("lastMessageAt", "desc"),
+                    limit(50)
+                );
+                const convSnap = await getDocs(convosQ);
 
-            if (followingSnapshot.empty) {
-                dmConversationList.innerHTML = '<p class="p-4 text-gray-500">Follow people to message them. Check the Discover tab!</p>';
-                return;
+                if (convSnap.empty) {
+                    dmConversationList.innerHTML = '<p class="p-4 text-gray-500">No conversations yet. Start one from a user profile.</p>';
+                    return;
+                }
+
+                dmConversationList.innerHTML = '';
+                convSnap.forEach(c => {
+                    const data = c.data();
+                    const otherId = data.members.find(m => m !== currentUser.uid) || '';
+                    const otherUsername = (data.memberInfo && data.memberInfo[otherId]?.username) || 'Unknown';
+                    const el = document.createElement('div');
+                    el.className = "p-4 border-b border-gray-200 cursor-pointer hover:bg-slate-100";
+                    el.textContent = otherUsername;
+                    el.dataset.userId = otherId;
+                    el.dataset.username = otherUsername;
+                    el.onclick = () => {
+                        Array.from(dmConversationList.children).forEach(child => child.classList.remove('bg-indigo-100', 'font-semibold'));
+                        el.classList.add('bg-indigo-100', 'font-semibold');
+                        openConversation(otherId, otherUsername);
+                    };
+                    dmConversationList.appendChild(el);
+                });
+            } catch (e) {
+                console.error('Error loading conversations list', e);
+                dmConversationList.innerHTML = '<p class="p-4 text-red-500">Error loading conversations.</p>';
             }
-
-            dmConversationList.innerHTML = ''; // Clear loading
-            followingSnapshot.forEach(doc => {
-                const partnerId = doc.id;
-                const partnerUsername = doc.data().username;
-                
-                const userElement = document.createElement('div');
-                userElement.className = "p-4 border-b border-gray-200 cursor-pointer hover:bg-slate-100";
-                userElement.textContent = partnerUsername;
-                userElement.dataset.userId = partnerId;
-                userElement.dataset.username = partnerUsername;
-                
-                userElement.onclick = () => {
-                    Array.from(dmConversationList.children).forEach(child => {
-                        child.classList.remove('bg-indigo-100', 'font-semibold');
-                    });
-                    userElement.classList.add('bg-indigo-100', 'font-semibold');
-                    
-                    openConversation(partnerId, partnerUsername);
-                };
-                
-                dmConversationList.appendChild(userElement);
-            });
         }
 
         async function openConversation(partnerId, partnerUsername) {
@@ -1732,10 +1839,150 @@
         }
         
         // --- 13. ACCOUNT DELETION ---
+
+        // Helper: delete a query's results in batches (with optional per-doc callback)
+        async function deleteByQuery(q, { batchSize = 200, perDoc } = {}) {
+            const snapshot = await getDocs(q);
+            if (snapshot.empty) return 0;
+            let deleted = 0;
+            let batch = writeBatch(db);
+            let ops = 0;
+            for (const d of snapshot.docs) {
+                if (perDoc) await perDoc(d, batch);
+                else batch.delete(d.ref);
+                ops += 1;
+                deleted += 1;
+                if (ops >= batchSize) {
+                    await batch.commit();
+                    batch = writeBatch(db);
+                    ops = 0;
+                }
+            }
+            if (ops > 0) await batch.commit();
+            return deleted;
+        }
+
+        async function deleteCollection(path, { batchSize = 200 } = {}) {
+            let total = 0;
+            while (true) {
+                const q = query(collection(db, path), limit(batchSize));
+                const snapshot = await getDocs(q);
+                if (snapshot.empty) break;
+                const batch = writeBatch(db);
+                snapshot.forEach(d => batch.delete(d.ref));
+                await batch.commit();
+                total += snapshot.size;
+                if (snapshot.size < batchSize) break;
+            }
+            return total;
+        }
+
+        async function deleteSubcollection(parentPath, subcollectionName) {
+            return await deleteCollection(`${parentPath}/${subcollectionName}`);
+        }
+
+        async function deleteUserPostsAndSubcollections(userId) {
+            const postsQ = query(collection(db, "posts"), where("userId", "==", userId), limit(100));
+            const postsSnap = await getDocs(postsQ);
+            if (postsSnap.empty) return;
+            for (const postDoc of postsSnap.docs) {
+                const postId = postDoc.id;
+                const postPath = `posts/${postId}`;
+                // Delete comments
+                await deleteSubcollection(postPath, "comments");
+                // Delete likes
+                await deleteSubcollection(postPath, "likes");
+                // Finally delete post
+                await deleteDoc(postDoc.ref);
+            }
+            // If more than 100 posts, recurse until none left
+            if (postsSnap.size === 100) await deleteUserPostsAndSubcollections(userId);
+        }
+
+        async function removeUserLikedPostsAndAdjustCounters(userId) {
+            const likedQ = query(collection(db, "users", userId, "likedPosts"), limit(200));
+            const likedSnap = await getDocs(likedQ);
+            if (likedSnap.empty) return;
+            for (const liked of likedSnap.docs) {
+                const postId = liked.id;
+                const postRef = doc(db, "posts", postId);
+                const postLikeRef = doc(db, "posts", postId, "likes", userId);
+                const userLikeRef = doc(db, "users", userId, "likedPosts", postId);
+                const batch = writeBatch(db);
+                batch.delete(userLikeRef);
+                batch.delete(postLikeRef);
+                batch.update(postRef, { likeCount: increment(-1), popularityScore: increment(-1) });
+                try { await batch.commit(); } catch (_) { /* ignore */ }
+            }
+            if (likedSnap.size === 200) await removeUserLikedPostsAndAdjustCounters(userId);
+        }
+
+        async function removeUserCommentsAndAdjustCounters(userId) {
+            const commentsQ = query(collectionGroup(db, "comments"), where("userId", "==", userId), limit(200));
+            const snap = await getDocs(commentsQ);
+            if (snap.empty) return;
+            for (const c of snap.docs) {
+                const parentPostRef = c.ref.parent.parent; // posts/{postId}
+                if (parentPostRef) {
+                    const batch = writeBatch(db);
+                    batch.delete(c.ref);
+                    batch.update(parentPostRef, { commentCount: increment(-1), popularityScore: increment(-3) });
+                    try { await batch.commit(); } catch (_) { /* ignore */ }
+                } else {
+                    try { await deleteDoc(c.ref); } catch (_) { /* ignore */ }
+                }
+            }
+            if (snap.size === 200) await removeUserCommentsAndAdjustCounters(userId);
+        }
+
+        async function removeFollowGraphs(userId) {
+            // Decrement counters on counterparts as best-effort
+            const followingQ = query(collection(db, "users", userId, "following"), limit(200));
+            const followingSnap = await getDocs(followingQ);
+            for (const f of followingSnap.docs) {
+                const targetRef = doc(db, "users", f.id);
+                try { await updateDoc(targetRef, { followersCount: increment(-1) }); } catch (_) {}
+            }
+            await deleteCollection(`users/${userId}/following`);
+
+            const followersQ = query(collection(db, "users", userId, "followers"), limit(200));
+            const followersSnap = await getDocs(followersQ);
+            for (const f of followersSnap.docs) {
+                const followerRef = doc(db, "users", f.id);
+                try { await updateDoc(followerRef, { followingCount: increment(-1) }); } catch (_) {}
+            }
+            await deleteCollection(`users/${userId}/followers`);
+        }
+
+        async function scrubDirectMessagesForUser(userId) {
+            const convosQ = query(collection(db, "conversations"), where("members", "array-contains", userId), limit(50));
+            const convosSnap = await getDocs(convosQ);
+            for (const convo of convosSnap.docs) {
+                const convoId = convo.id;
+                // Delete user's messages in this conversation
+                const msgsQ = query(collection(db, "conversations", convoId, "messages"), where("senderId", "==", userId), limit(200));
+                await deleteByQuery(msgsQ);
+                // Remove memberInfo entry and clear lastMessage if it was theirs
+                const data = convo.data();
+                const updates = { [`memberInfo.${userId}`]: deleteField() };
+                if (data.lastMessageSenderId === userId) {
+                    updates.lastMessage = "";
+                    updates.lastMessageSenderId = "";
+                    updates.lastMessageAt = serverTimestamp();
+                }
+                try { await updateDoc(convo.ref, updates); } catch (_) {}
+            }
+            // Note: We intentionally keep conversations for the other participant.
+        }
         
         deleteAccountBtn.addEventListener('click', () => {
             deleteError.textContent = '';
             confirmDeleteBtn.disabled = false;
+            // Hide reauth UI by default
+            reauthSection.classList.add('hidden');
+            reauthPasswordContainer.classList.add('hidden');
+            reauthGoogleBtn.classList.add('hidden');
+            if (reauthPasswordInput) reauthPasswordInput.value = '';
             deleteAccountModal.classList.remove('hidden');
         });
         
@@ -1746,23 +1993,87 @@
         confirmDeleteBtn.addEventListener('click', () => {
             deleteUserAccount();
         });
+
+        retryDeleteBtn.addEventListener('click', () => {
+            deleteUserAccount();
+        });
+
+        function showReauthOptions() {
+            if (!currentUser) return;
+            reauthSection.classList.remove('hidden');
+            const providers = (currentUser.providerData || []).map(p => p.providerId);
+            if (providers.includes('password') || currentUser.email) {
+                reauthPasswordContainer.classList.remove('hidden');
+            } else {
+                reauthPasswordContainer.classList.add('hidden');
+            }
+            if (providers.includes('google.com')) {
+                reauthGoogleBtn.classList.remove('hidden');
+            } else {
+                reauthGoogleBtn.classList.add('hidden');
+            }
+        }
+
+        reauthPasswordBtn?.addEventListener('click', async () => {
+            if (!currentUser) return;
+            const pwd = reauthPasswordInput.value.trim();
+            if (!pwd || !currentUser.email) {
+                deleteError.textContent = 'Enter your password to reauthenticate.';
+                return;
+            }
+            try {
+                const cred = EmailAuthProvider.credential(currentUser.email, pwd);
+                await reauthenticateWithCredential(currentUser, cred);
+                deleteError.textContent = 'Reauthentication successful. Retrying deletion...';
+                await deleteUserAccount();
+            } catch (e) {
+                console.error('Password reauth failed', e);
+                deleteError.textContent = `Reauthentication failed: ${e.message}`;
+            }
+        });
+
+        reauthGoogleBtn?.addEventListener('click', async () => {
+            if (!currentUser) return;
+            try {
+                await reauthenticateWithPopup(currentUser, new GoogleAuthProvider());
+                deleteError.textContent = 'Reauthentication successful. Retrying deletion...';
+                await deleteUserAccount();
+            } catch (e) {
+                console.error('Google reauth failed', e);
+                deleteError.textContent = `Reauthentication failed: ${e.message}`;
+            }
+        });
         
         async function deleteUserAccount() {
             const user = auth.currentUser;
             if (!user || !currentUserProfile) return;
             
             confirmDeleteBtn.disabled = true;
-            deleteError.textContent = 'Deleting account...';
+            deleteError.textContent = 'Deleting account... (1/6) Removing likes and comments';
 
             try {
-                // 1. Delete user's profile doc
+                // Remove likes and comments across the app
+                await removeUserLikedPostsAndAdjustCounters(user.uid);
+                await removeUserCommentsAndAdjustCounters(user.uid);
+
+                deleteError.textContent = 'Deleting account... (2/6) Deleting your posts';
+                await deleteUserPostsAndSubcollections(user.uid);
+
+                deleteError.textContent = 'Deleting account... (3/6) Cleaning your follow graph';
+                await removeFollowGraphs(user.uid);
+
+                deleteError.textContent = 'Deleting account... (4/6) Scrubbing your direct messages';
+                await scrubDirectMessagesForUser(user.uid);
+
+                deleteError.textContent = 'Deleting account... (5/6) Removing profile';
                 await deleteDoc(doc(db, "users", user.uid));
-                
-                // 2. Delete user's username doc
+
+                // Remove username reservation
                 await deleteDoc(doc(db, "usernames", currentUserProfile.username));
 
-                // 3. Delete user's auth record
+                // Delete user's auth record
                 // This is the sensitive part that might fail
+                deleteError.textContent = 'Deleting account... (6/6) Removing authentication record';
                 await deleteUser(user);
                 
                 // Success. onAuthStateChanged will handle the UI redirect.
@@ -1771,7 +2082,8 @@
             } catch (error) {
                 console.error("Delete Account Error:", error);
                 if (error.code === 'auth/requires-recent-login') {
-                    deleteError.textContent = 'This is a sensitive action. Please log out, log back in, and try again.';
+                    deleteError.textContent = 'Sensitive action requires recent login. Please reauthenticate below.';
+                    showReauthOptions();
                 } else {
                     deleteError.textContent = `Error: ${error.message}`;
                 }
@@ -1833,25 +2145,17 @@
                 if(userId) loadProfileFeed(userId, true);
             });
             
-            // NEW: Discover filter listener
-            discoverFilters.addEventListener('click', (e) => {
-                const targetButton = e.target.closest('.filter-link');
-                if (!targetButton) return;
-                
-                const filter = targetButton.dataset.filter;
-                if (filter === currentDiscoverFilter) return; // No change
-                
-                currentDiscoverFilter = filter;
-                
-                // Update active class
-                discoverFilters.querySelectorAll('.filter-link').forEach(btn => {
-                    btn.classList.remove('active');
+            // NEW: Discover filter dropdown listener
+            if (discoverFilterSelect) {
+                // Sync initial value
+                discoverFilterSelect.value = currentDiscoverFilter;
+                discoverFilterSelect.addEventListener('change', (e) => {
+                    const selected = e.target.value;
+                    if (!selected || selected === currentDiscoverFilter) return;
+                    currentDiscoverFilter = selected;
+                    loadDiscoverFeed(false);
                 });
-                targetButton.classList.add('active');
-                
-                // Reload feed
-                loadDiscoverFeed(false);
-            });
+            }
 
             // Attempt Canvas auth after DOM is loaded
             attemptCanvasAuth();
@@ -1873,4 +2177,3 @@
     </script>
 </body>
 </html>
-
