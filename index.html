@@ -2388,8 +2388,15 @@
                     searchResults.appendChild(frag);
                 }
             } catch (e) {
+                // --- MODIFICATION START ---
+                // Provide better error messages, especially for missing indexes
                 console.error('Search error', e);
-                searchResults.innerHTML = `<p class="text-red-500">Error searching. ${e.message}</p>`;
+                let errorMsg = `Error searching. ${e.message}`;
+                if (e.message && e.message.toLowerCase().includes("index")) {
+                    errorMsg = `Search failed: ${e.message}. You may need to create a Firestore index. Check the browser console (F12) for a link to create it.`;
+                }
+                searchResults.innerHTML = `<p class="text-red-500">${errorMsg}</p>`;
+                // --- MODIFICATION END ---
             }
         }, 400);
 
